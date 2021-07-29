@@ -1,18 +1,38 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
+#define ll long long int
+#define f ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
 class node{
     public:
     int data;
     node* next;
-
     node(int val){
         data=val;
         next=NULL;
     }
 };
 
-void disp(node* &head){
+void atTail(node*&head,int val){
+    node*n=new node(val);
+    if(head==NULL){
+        head=n;
+        return;
+    }
+    node*temp=head;
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    temp->next=n;
+}
+
+void atHead(node*&head,int val){
+    node*n=new node(val);
+    n->next=head;
+    head=n;
+}
+
+void disp(node*&head){
     node*temp=head;
     while(temp!=NULL){
         cout<<temp->data<<"->";
@@ -21,27 +41,8 @@ void disp(node* &head){
     cout<<"NULL"<<endl;
 }
 
-void tail(node* &head, int val){
-    node* n = new node(val);
-    if(head==NULL){
-        head=n;
-        return;
-    }
-    node* temp=head;
-    while(temp->next!=NULL){
-        temp=temp->next;
-    }
-    temp->next=n;
-}
-
-void athead(node* &head,int val){
-    node* n = new node(val);
-    n->next=head;
-    head=n;
-}
-
-bool search(node* &head,int key){
-    node* temp=head;
+bool search(node*&head,int key){
+    node*temp=head;
     while(temp!=NULL){
         if(temp->data==key){
             return true;
@@ -51,64 +52,60 @@ bool search(node* &head,int key){
     return false;
 }
 
-void deleteAtHead(node* &head){
-    node* todelete=head;
+void deleteAtHead(node*&head){
+    node*todelete=head;
     head=head->next;
     delete todelete;
 }
 
-void deletion(node* &head,int val){
-    if(head==NULL){
-        return;
-    }
-    if(head->next==NULL){
+void deletion(node*&head,int val){
+    if(head==NULL || head->next==NULL){
         deleteAtHead(head);
+        return;
     }
     node*temp=head;
     while(temp->next->data!=val){
         temp=temp->next;
     }
-    node* todelete = temp->next;
+    node*todelete=temp->next;
     temp->next=temp->next->next;
     delete todelete;
 }
 
-node* reverse(node*&head){
+node* rev(node*&head){
     node*prev=NULL;
     node*curr=head;
     node*nextptr;
-
     while(curr!=NULL){
         nextptr=curr->next;
         curr->next=prev;
-
         prev=curr;
         curr=nextptr;
     }
     return prev;
 }
 
-node* revrecur(node*&head){
-    if(head==NULL || head->next==NULL){
+node* revRecur(node*&head){
+    if(head==NULL or head->next==NULL){
         return head;
     }
-    node* newhead=revrecur(head->next);
+    node* newHead=revRecur(head->next);
     head->next->next=head;
     head->next=NULL;
-    return newhead;
+    return newHead;
 }
 
-node* revk(node* &head,int k){
-    node*prev=NULL;
+node* revk(node*&head,int k){
+    node* prev=NULL;
     node*curr=head;
-    node*nextptr;
+    node* nextptr;
     int c=0;
-    while(curr!=NULL&&c<k){
-    nextptr=curr->next;
-    curr->next=prev;
-    prev=curr;
-    curr=nextptr;
-    c++;
+    while(curr!=NULL && c<k){
+        nextptr=curr->next;
+        curr->next=prev;
+        prev=curr;
+        curr=nextptr;
+        c++;
     }
     if(nextptr!=NULL){
         head->next=revk(nextptr,k);
@@ -116,75 +113,100 @@ node* revk(node* &head,int k){
     return prev;
 }
 
-void makecycle(node*&head,int pos){
+void makeCycle(node*&head,int pos){
     node*temp=head;
-    node*startNode;
+    node*startnode;
     int c=1;
     while(temp->next!=NULL){
         if(c==pos){
-            startNode=temp;
+            startnode=temp;
         }
         temp=temp->next;
         c++;
     }
-    temp->next=startNode;
+    temp->next=startnode;
 }
 
-bool detectcycle(node*&head){
+bool detectCycle(node*&head){
     node*fast=head;
     node*slow=head;
-    while(fast!=NULL&&fast->next!=NULL){
-        fast=fast->next->next;
+    while(fast!=NULL && fast->next!=NULL){
         slow=slow->next;
-        if(fast==slow){
-            return true;
-        }
+        fast=fast->next->next;
+        if(fast==slow)
+        return true;
     }
     return false;
 }
 
-void removecycle(node*&head){
-    node*slow=head;
+void removeCycle(node*&head){
     node*fast=head;
-    do{
-        slow=slow->next;
+    node*slow=head;
+    do
+    {
         fast=fast->next->next;
-    }
-    while(slow->next!=fast->next);{
         slow=slow->next;
+    } while (slow->next!=fast->next);{
         fast=fast->next;
+        slow=slow->next;
     }
     slow->next=NULL;
 }
 
+int length(node*&head){
+    int l=0;
+    node*temp=head;
+    while(temp!=NULL){
+        l++;
+        temp=temp->next;
+    }
+    return l;
+}
+
+node* kappend(node*&head,int k){
+    node*newTail;
+    node*newHead;
+    node* tail=head;
+    int l=length(head);
+    int c=1;
+    while(tail->next!=NULL){
+        if(c==l-k)
+        newTail=tail;
+        if(c==l-k+1)
+        newHead=tail;
+        tail=tail->next;
+        c++;
+    }
+    newTail->next=NULL;
+    tail->next=head;
+    return newHead;
+}
+
 int main(){
-    node* head=NULL;
-
-    tail(head,2);
-    tail(head,3);
-    tail(head,4);
-    tail(head,5);
-    tail(head,6);
-    athead(head,1);
+    node*head=NULL;
+    atTail(head,2);
+    atTail(head,3);
+    atTail(head,4);
+    atTail(head,5);
+    atTail(head,6);
+    atHead(head,1);
     disp(head);
-    // cout<<search(head,9)<<endl;
-
+    // cout<<search(head,4)<<endl;
     // deletion(head,3);
+    // disp(head);
     // deleteAtHead(head);
     // disp(head);
-
-    // node* newhead=revrecur(head);
-    // disp(newhead);
-
+    // node* newHead=revRecur(head);
+    // disp(newHead);
     // int k=2;
     // node* newhead=revk(head,k);
     // disp(newhead);
+    //makeCycle(head,3);
+    // cout<<detectCycle(head)<<endl;
+    // removeCycle(head);
+    // cout<<detectCycle(head)<<endl;
+    node*newHead=kappend(head,3);
+    disp(newHead);
 
-    // makecycle(head,3);
-    // cout<<detectcycle(head)<<endl;
-    // removecycle(head);
-    cout<<detectcycle(head)<<endl;
-
-
-return 0;
+    return 0;
 }
